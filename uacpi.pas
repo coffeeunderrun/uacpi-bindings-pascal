@@ -66,45 +66,8 @@ type
     UACPI_STATUS_AML_CALL_STACK_DEPTH_LIMIT := $0EFF000A
   );
 
-function UacpiSetupEarlyTableAccess(Buffer: Pointer; Size: UacpiSize): UacpiStatus; cdecl; external name 'uacpi_setup_early_table_access';
+function SetupEarlyTableAccess(Buffer: Pointer; Size: UacpiSize): UacpiStatus; cdecl; external name 'uacpi_setup_early_table_access';
 
 implementation
-
-function MemCmp(const Ptr1: Pointer; const Ptr2: Pointer; Count: UacpiSize): Integer; cdecl; public name 'memcmp';
-begin
-  result := 0;
-end;
-
-function MemCpy(Dest: Pointer; const Source: Pointer; Size: UacpiSize): Pointer; cdecl; public name 'memcpy';
-begin
-  result := nil;
-end;
-
-function MemMove(Dest: Pointer; const Source: Pointer; Size: UacpiSize): Pointer; cdecl; public name 'memmove';
-begin
-  result := nil;
-end;
-
-procedure MemSet(Dest: Pointer; Value: UacpiI32; Size: UacpiSize); cdecl; public name 'memset';
-begin
-end;
-
-procedure KernelLog(LogLevel: UacpiLogLevel; const Message: PUacpiChar); cdecl; public name 'uacpi_kernel_log';
-begin
-end;
-
-function KernelMap(Address: UacpiPhysAddr; Size: UacpiSize): Pointer; cdecl; public name 'uacpi_kernel_map';
-begin
-  result := nil;
-end;
-
-procedure KernelUnmap(Ptr: Pointer; Size: UacpiSize); cdecl; public name 'uacpi_kernel_unmap';
-begin
-end;
-
-function KernelGetRsdp(AddressPtr: PUacpiPhysAddr): UacpiStatus; cdecl; public name 'uacpi_kernel_get_rsdp';
-begin
-  result := UACPI_STATUS_NOT_FOUND;
-end;
 
 end.
