@@ -1,72 +1,12 @@
-unit Uacpi;
+unit uacpi;
 
 interface
 
-type
-  PUacpiChar = ^UacpiChar;
-  UacpiChar  = Char;
+{$I status.inc}
+{$I types.inc}
+{$I log.inc}
 
-  UacpiI8  = ShortInt;
-  UacpiI16 = SmallInt;
-  UacpiI32 = LongInt;
-  UacpiI64 = Int64;
-
-  UacpiU8  = Byte;
-  UacpiU16 = Word;
-  UacpiU32 = DWord;
-  UacpiU64 = QWord;
-
-  UacpiSize     = SizeUInt;
-  UacpiUIntPtr  = PtrUInt;
-  UacpiIoAddr   = UacpiU64;
-
-  PUacpiPhysAddr = ^UacpiPhysAddr;
-  UacpiPhysAddr  = UacpiU64;
-
-  UacpiLogLevel = (
-    UACPI_LOG_ERROR := 1,
-    UACPI_LOG_WARN := 2,
-    UACPI_LOG_INFO := 3,
-    UACPI_LOG_TRACE := 4,
-    UACPI_LOG_DEBUG := 5
-  );
-
-  UacpiStatus = (
-    UACPI_STATUS_OK := 0,
-    UACPI_STATUS_MAPPING_FAILED := 1,
-    UACPI_STATUS_OUT_OF_MEMORY := 2,
-    UACPI_STATUS_BAD_CHECKSUM := 3,
-    UACPI_STATUS_INVALID_SIGNATURE := 4,
-    UACPI_STATUS_INVALID_TABLE_LENGTH := 5,
-    UACPI_STATUS_NOT_FOUND := 6,
-    UACPI_STATUS_INVALID_ARGUMENT := 7,
-    UACPI_STATUS_UNIMPLEMENTED := 8,
-    UACPI_STATUS_ALREADY_EXISTS := 9,
-    UACPI_STATUS_INTERNAL_ERROR := 10,
-    UACPI_STATUS_TYPE_MISMATCH := 11,
-    UACPI_STATUS_INIT_LEVEL_MISMATCH := 12,
-    UACPI_STATUS_NAMESPACE_NODE_DANGLING := 13,
-    UACPI_STATUS_NO_HANDLER := 14,
-    UACPI_STATUS_NO_RESOURCE_END_TAG := 15,
-    UACPI_STATUS_COMPILED_OUT := 16,
-    UACPI_STATUS_HARDWARE_TIMEOUT := 17,
-    UACPI_STATUS_TIMEOUT := 18,
-    UACPI_STATUS_OVERRIDDEN := 19,
-    UACPI_STATUS_DENIED := 20,
-    UACPI_STATUS_AML_UNDEFINED_REFERENCE := $0EFF0000,
-    UACPI_STATUS_AML_INVALID_NAMESTRING := $0EFF0001,
-    UACPI_STATUS_AML_OBJECT_ALREADY_EXISTS := $0EFF0002,
-    UACPI_STATUS_AML_INVALID_OPCODE := $0EFF0003,
-    UACPI_STATUS_AML_INCOMPATIBLE_OBJECT_TYPE := $0EFF0004,
-    UACPI_STATUS_AML_BAD_ENCODING := $0EFF0005,
-    UACPI_STATUS_AML_OUT_OF_BOUNDS_INDEX := $0EFF0006,
-    UACPI_STATUS_AML_SYNC_LEVEL_TOO_HIGH := $0EFF0007,
-    UACPI_STATUS_AML_INVALID_RESOURCE := $0EFF0008,
-    UACPI_STATUS_AML_LOOP_TIMEOUT := $0EFF0009,
-    UACPI_STATUS_AML_CALL_STACK_DEPTH_LIMIT := $0EFF000A
-  );
-
-function SetupEarlyTableAccess(Buffer: Pointer; Size: UacpiSize): UacpiStatus; cdecl; external name 'uacpi_setup_early_table_access';
+function uacpi_setup_early_table_access(Buffer: Pointer; Size: uacpi_size): uacpi_status; cdecl; external;
 
 implementation
 
