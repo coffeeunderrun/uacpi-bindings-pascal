@@ -28,4 +28,4 @@ type
 
   uacpi_size = SizeUInt;
 
-{$endif}
+{$endif UACPI_OVERRIDE_TYPES}
