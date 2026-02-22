@@ -1,5 +1,5 @@
 type
-  uacpi_status = (
+  Tuacpi_status = (
     UACPI_STATUS_OK = 0,
     UACPI_STATUS_MAPPING_FAILED = 1,
     UACPI_STATUS_OUT_OF_MEMORY = 2,
@@ -34,4 +34,4 @@ type
     UACPI_STATUS_AML_CALL_STACK_DEPTH_LIMIT = $0EFF000A
   );
 
-function uacpi_status_to_string(status: uacpi_status): puacpi_char; cdecl; external;
+function uacpi_status_to_string(status: Tuacpi_status): Puacpi_char; cdecl; external;

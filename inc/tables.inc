@@ -1,28 +1,25 @@
 type
-  puacpi_table_identifiers = ^uacpi_table_identifiers;
-  uacpi_table_identifiers = record
-    signature: uacpi_object_name;
+  Puacpi_table_identifiers = ^Tuacpi_table_identifiers;
+  Tuacpi_table_identifiers = record
+    signature: Tuacpi_object_name;
 
     // if oemid[0] == 0 this field is ignored
-    oemid: array [0..5] of uacpi_char;
+    oemid: array [0..5] of Tuacpi_char;
 
     // if oem_table_id[0] == 0 this field is ignored
-    oem_table_id: array [0..7] of uacpi_char;
+    oem_table_id: array [0..7] of Tuacpi_char;
   end;
 
-  puacpi_table = ^uacpi_table;
-  uacpi_table = record case Integer of
-    0: (
-      // virt_addr, ptr, and hdr are just different ways to refer to the same pointer.
-      case Integer of
-        0: (virt_addr: uacpi_virt_addr);
-        1: (hdr: pacpi_sdt_hdr);
-    );
-    1: (
-      ptr: Pointer;
-      // Index number used to identify this table internally
-      index: uacpi_size;
-    );
+  Puacpi_table = ^Tuacpi_table;
+  Tuacpi_table = record
+    union: record case Integer of
+      0: (virt_addr: Tuacpi_virt_addr);
+      1: (ptr: Pointer);
+      2: (hdr: Pacpi_sdt_hdr);
+    end;
+
+    // Index number used to identify this table internally
+    index: Tuacpi_size;
   end;
 
 (*
@@ -36,14 +33,14 @@ type
  * table installation callback (if any).
  *)
 function uacpi_table_install(
-    ptr: Pointer;
-    out_table: puacpi_table
-): uacpi_status; cdecl; external;
+  ptr: Pointer;
+  out out_table: Tuacpi_table
+): Tuacpi_status; cdecl; external;
 
 function uacpi_table_install_physical(
-    addr: uacpi_phys_addr;
-    out_table: puacpi_table
-): uacpi_status; cdecl; external;
+  addr: Tuacpi_phys_addr;
+  out out_table: Tuacpi_table
+): Tuacpi_status; cdecl; external;
 
 (*
  * Helpers for finding tables.
@@ -66,25 +63,25 @@ function uacpi_table_install_physical(
  *)
 
 function uacpi_table_find_by_signature(
-  const signature: puacpi_char;
-  out_table: puacpi_table
-): uacpi_status; cdecl; external;
+  const signature: Puacpi_char;
+  out out_table: Tuacpi_table
+): Tuacpi_status; cdecl; external;
 
 function uacpi_table_find_next_with_same_signature(
-    in_out_table: puacpi_table
-): uacpi_status; cdecl; external;
+  var in_out_table: Tuacpi_table
+): Tuacpi_status; cdecl; external;
 
 function uacpi_table_find(
-    const id: puacpi_table_identifiers;
-    out_table: puacpi_table
-): uacpi_status; cdecl; external;
+  const id: Puacpi_table_identifiers;
+  out out_table: Tuacpi_table
+): Tuacpi_status; cdecl; external;
 
 (*
  * Increment/decrement a table's reference count.
  * The table is unmapped when the reference count drops to 0.
  *)
-function uacpi_table_ref(table: puacpi_table): uacpi_status; cdecl; external;
-function uacpi_table_unref(table: puacpi_table): uacpi_status; cdecl; external;
+function uacpi_table_ref(table: Puacpi_table): Tuacpi_status; cdecl; external;
+function uacpi_table_unref(table: Puacpi_table): Tuacpi_status; cdecl; external;
 
 (*
  * Returns the pointer to a sanitized internal version of FADT.
@@ -92,10 +89,10 @@ function uacpi_table_unref(table: puacpi_table): uacpi_status; cdecl; external;
  * The revision is guaranteed to be correct. All of the registers are converted
  * to GAS format. Fields that might contain garbage are cleared.
  *)
-function uacpi_table_fadt(out_fadt: ppacpi_fadt): uacpi_status; cdecl; external;
+function uacpi_table_fadt(out out_fadt: Pacpi_fadt): Tuacpi_status; cdecl; external;
 
 type
-  uacpi_table_installation_disposition = (
+  Tuacpi_table_installation_disposition = (
     // Allow the table to be installed as-is
     UACPI_TABLE_INSTALLATION_DISPOSITON_ALLOW = 0,
 
@@ -119,10 +116,10 @@ type
     UACPI_TABLE_INSTALLATION_DISPOSITON_PHYSICAL_OVERRIDE
   );
 
-  uacpi_table_installation_handler = function (
-    hdr: pacpi_sdt_hdr;
-    out_override_address: puacpi_u64
-  ): uacpi_table_installation_disposition; cdecl;
+  Tuacpi_table_installation_handler = function (
+    hdr: Pacpi_sdt_hdr;
+    out out_override_address: Tuacpi_u64
+  ): Tuacpi_table_installation_disposition; cdecl;
 
 (*
  * Set a handler that is invoked for each table before it gets installed.
@@ -131,14 +128,14 @@ type
  * as-is, denied, or overriden with a new one.
  *)
 function uacpi_set_table_installation_handler(
-    handler: uacpi_table_installation_handler
-): uacpi_status; cdecl; external;
+  handler: Tuacpi_table_installation_handler
+): Tuacpi_status; cdecl; external;
 
 type
-  uacpi_subtable_iteration_callback = function (
-    handle: uacpi_handle;
-    hdr: pacpi_entry_hdr
-  ): uacpi_iteration_decision; cdecl;
+  Tuacpi_subtable_iteration_callback = function (
+    handle: Tuacpi_handle;
+    hdr: Pacpi_entry_hdr
+  ): Tuacpi_iteration_decision; cdecl;
 
 (*
  * Iterate every subtable of a table such as MADT or SRAT.
@@ -157,8 +154,8 @@ type
  *    );
  *)
 function uacpi_for_each_subtable(
-  hdr: pacpi_sdt_hdr;
-  hdr_size: uacpi_size;
-  cb: uacpi_subtable_iteration_callback;
+  hdr: Pacpi_sdt_hdr;
+  hdr_size: Tuacpi_size;
+  cb: Tuacpi_subtable_iteration_callback;
   user: Pointer
-): uacpi_status; cdecl; external;
+): Tuacpi_status; cdecl; external;

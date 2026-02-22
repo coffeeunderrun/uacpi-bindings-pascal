@@ -10,22 +10,22 @@ const
   UACPI_NULL  = nil;
 
 type
-  uacpi_u8  = Byte;
-  uacpi_u16 = Word;
-  uacpi_u32 = DWord;
-  uacpi_u64 = QWord;
+  Tuacpi_u8  = Byte;
+  Tuacpi_u16 = Word;
+  Tuacpi_u32 = DWord;
+  Tuacpi_u64 = QWord;
 
-  uacpi_i8  = ShortInt;
-  uacpi_i16 = SmallInt;
-  uacpi_i32 = LongInt;
-  uacpi_i64 = Int64;
+  Tuacpi_i8  = ShortInt;
+  Tuacpi_i16 = SmallInt;
+  Tuacpi_i32 = LongInt;
+  Tuacpi_i64 = Int64;
 
-  uacpi_bool = Boolean;
-  uacpi_char = Char;
+  Tuacpi_bool = Boolean;
+  Tuacpi_char = Char;
 
-  uacpi_uintptr   = PtrUInt;
-  uacpi_virt_addr = uacpi_uintptr;
+  Tuacpi_uintptr   = PtrUInt;
+  Tuacpi_virt_addr = Tuacpi_uintptr;
 
-  uacpi_size = SizeUInt;
+  Tuacpi_size = SizeUInt;
 
 {$endif UACPI_OVERRIDE_TYPES}

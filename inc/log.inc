@@ -1,5 +1,5 @@
 type
-  uacpi_log_level = (
+  Tuacpi_log_level = (
     (*
      * Logs only critical errors that might affect the ability to initialize or
      * prevent stable runtime.

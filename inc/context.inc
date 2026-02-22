@@ -11,11 +11,32 @@
  *   UACPI_LOG_WARN -> allowed
  *   UACPI_LOG_ERROR -> allowed
  *)
-procedure uacpi_context_set_log_level(log_level: uacpi_log_level); cdecl; external;
+procedure uacpi_context_set_log_level(log_level: Tuacpi_log_level); cdecl; external;
 
 (*
  * Enables table checksum validation at installation time instead of first use.
  * Note that this makes uACPI map the entire table at once, which not all
  * hosts are able to handle at early init.
  *)
-procedure uacpi_context_set_proactive_table_checksum(enabled: uacpi_bool); cdecl; external;
+procedure uacpi_context_set_proactive_table_checksum(enabled: Tuacpi_bool); cdecl; external;
+
+{$ifndef UACPI_BAREBONES_MODE}
+
+(*
+ * Set the maximum number of seconds a While loop is allowed to run for before
+ * getting timed out.
+ *
+ * 0 is treated a special value that resets the setting to the default value.
+ *)
+procedure uacpi_context_set_loop_timeout(seconds: Tuacpi_u32); cdecl; external;
+
+(*
+ * Set the maximum call stack depth AML can reach before getting aborted.
+ *
+ * 0 is treated as a special value that resets the setting to the default value.
+ *)
+procedure uacpi_context_set_max_call_stack_depth(depth: Tuacpi_u32); cdecl; external;
+
+function uacpi_context_get_loop_timeout: Tuacpi_u32; cdecl; external;
+
+{$endif UACPI_BAREBONES_MODE}
