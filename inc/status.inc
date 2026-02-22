@@ -33,3 +33,5 @@ type
     UACPI_STATUS_AML_LOOP_TIMEOUT = $0EFF0009,
     UACPI_STATUS_AML_CALL_STACK_DEPTH_LIMIT = $0EFF000A
   );
+
+function uacpi_status_to_string(status: uacpi_status): puacpi_char; cdecl; external;

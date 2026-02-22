@@ -4,10 +4,16 @@ unit uacpi;
 
 interface
 
-{$I status.inc}
+const
+  UACPI_MAJOR = 3;
+  UACPI_MINOR = 2;
+  UACPI_PATCH = 0;
+
 {$I types.inc}
+{$I status.inc}
 {$I log.inc}
 
+{$I context.inc}
 {$I acpi.inc}
 {$I tables.inc}
 
@@ -36,6 +42,45 @@ function uacpi_setup_early_table_access(
   temporary_buffer: Pointer;
   buffer_size: uacpi_size
 ): uacpi_status; cdecl; external;
+
+const
+  (*
+   * Bad table checksum should be considered a fatal error
+   * (table load is fully aborted in this case)
+   *)
+  UACPI_FLAG_BAD_CSUM_FATAL = (QWord(1) shl 0);
+
+  (*
+   * Unexpected table signature should be considered a fatal error
+   * (table load is fully aborted in this case)
+   *)
+  UACPI_FLAG_BAD_TBL_SIGNATURE_FATAL = (QWord(1) shl 1);
+
+  (*
+   * Force uACPI to use RSDT even for later revisions
+   *)
+  UACPI_FLAG_BAD_XSDT = (QWord(1) shl 2);
+
+  (*
+   * If this is set, ACPI mode is not entered during the call to
+   * uacpi_initialize. The caller is expected to enter it later at their own
+   * discretion by using uacpi_enter_acpi_mode().
+   *)
+  UACPI_FLAG_NO_ACPI_MODE = (QWord(1) shl 3);
+
+  (*
+   * Don't create the \_OSI method when building the namespace.
+   * Only enable this if you're certain that having this method breaks your AML
+   * blob, a more atomic/granular interface management is available via osi.h
+   *)
+  UACPI_FLAG_NO_OSI = (QWord(1) shl 4);
+
+  (*
+   * Validate table checksums at installation time instead of first use.
+   * Note that this makes uACPI map the entire table at once, which not all
+   * hosts are able to handle at early init.
+   *)
+  UACPI_FLAG_PROACTIVE_TBL_CSUM = (QWord(1) shl 5);
 
 (*
  * Reset the global uACPI state by freeing all internally allocated data
