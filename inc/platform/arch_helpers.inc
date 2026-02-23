@@ -6,6 +6,7 @@
 
 type
   Tuacpi_cpu_flags = Cardinal;
+  Tuacpi_interrupt_state = Cardinal;
   Tuacpi_thread_id = Pointer;
 
 const

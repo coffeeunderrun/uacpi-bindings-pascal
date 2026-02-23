@@ -5,8 +5,8 @@ unit uacpi;
 interface
 
 const
-  UACPI_MAJOR = 3;
-  UACPI_MINOR = 2;
+  UACPI_MAJOR = 4;
+  UACPI_MINOR = 0;
   UACPI_PATCH = 0;
 
 {$I platform/arch_helpers.inc}
@@ -47,6 +47,10 @@ type
  *   uacpi_kernel_alloc() after the call to uacpi_initialize() and can therefore
  *   be reclaimed by the kernel.
  *
+ * The 'temporary_buffer' is expected to be aligned on the native pointer size
+ * boundary (4 on a 32-bit system, 8 on a 64-bit system), although any
+ * misalignment is handled gracefully and does not result in an error.
+ *
  * The approximate overhead per table is 56 bytes, so a buffer of 4096 bytes
  * yields about 73 tables in terms of capacity. uACPI also has an internal
  * static buffer for tables, "UACPI_STATIC_TABLE_ARRAY_LEN", which is configured
@@ -59,6 +63,13 @@ function uacpi_setup_early_table_access(
   temporary_buffer: Pointer;
   buffer_size: Tuacpi_size
 ): Tuacpi_status; cdecl; external;
+
+(*
+ * Returns UACPI_TRUE if the table subsystem is available for use by the kernel.
+ * This happens after a successful call to either uacpi_initialize(...) or
+ * uacpi_setup_early_table_access(...).
+ *)
+function uacpi_table_subsystem_available: Tuacpi_bool; cdecl; external;
 
 const
   (*
@@ -98,6 +109,15 @@ const
    * hosts are able to handle at early init.
    *)
   UACPI_FLAG_PROACTIVE_TBL_CSUM = (Tuacpi_u64(1) shl 5);
+
+(*
+ * Returns UACPI_TRUE via 'out_value' if the current platform is reduced ACPI
+ * hardware, UACPI_FALSE otherwise.
+ *
+ * This getter becomes available along with the table subsystem, use
+ * uacpi_table_subsystem_available() to check.
+ *)
+function uacpi_is_platform_reduced_hardware(out out_value: Tuacpi_bool): Tuacpi_status; cdecl; external;
 
 {$ifndef UACPI_BAREBONES_MODE}
 
@@ -277,8 +297,8 @@ function uacpi_get_aml_bitness(out out_bitness: Tuacpi_u8): Tuacpi_status; cdecl
  * automatically during the call to uacpi_initialize().
  *)
 {$ifdef UACPI_REDUCED_HARDWARE}
-function uacpi_enter_acpi_mode: Tuacpi_status; cdecl;
-function uacpi_leave_acpi_mode: Tuacpi_status; cdecl;
+function uacpi_enter_acpi_mode: Tuacpi_status; cdecl; inline;
+function uacpi_leave_acpi_mode: Tuacpi_status; cdecl; inline;
 {$else UACPI_REDUCED_HARDWARE}
 function uacpi_enter_acpi_mode: Tuacpi_status; cdecl; external;
 function uacpi_leave_acpi_mode: Tuacpi_status; cdecl; external;
