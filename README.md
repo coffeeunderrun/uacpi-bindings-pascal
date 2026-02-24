@@ -3,11 +3,8 @@
 This repository contains the Pascal unit for uACPI bindings.
 
 > [!WARNING]
-> This is a work-in-progress and requires further testing.
-
-> [!NOTE]
-> Only barebones bindings implemented at this point.
-> Full support is in progress.
+> Most of the bindings have been implemented.
+> However, thorough testing is still in progress.
 
 ### Acknowledgments
 
