@@ -30,8 +30,9 @@ type
 {$I types.inc}
 {$I log.inc}
 
-{$I context.inc}
 {$I acpi.inc}
+{$I context.inc}
+{$I event.inc}
 {$I tables.inc}
 
 (*
@@ -296,13 +297,8 @@ function uacpi_get_aml_bitness(out out_bitness: Tuacpi_u8): Tuacpi_status; cdecl
  * Helpers for entering & leaving ACPI mode. Note that ACPI mode is entered
  * automatically during the call to uacpi_initialize().
  *)
-{$ifdef UACPI_REDUCED_HARDWARE}
-function uacpi_enter_acpi_mode: Tuacpi_status; cdecl; inline;
-function uacpi_leave_acpi_mode: Tuacpi_status; cdecl; inline;
-{$else UACPI_REDUCED_HARDWARE}
-function uacpi_enter_acpi_mode: Tuacpi_status; cdecl; external;
-function uacpi_leave_acpi_mode: Tuacpi_status; cdecl; external;
-{$endif UACPI_REDUCED_HARDWARE}
+function uacpi_enter_acpi_mode: Tuacpi_status; cdecl; {$ifdef UACPI_REDUCED_HARDWARE}inline;{$else}external;{$endif}
+function uacpi_leave_acpi_mode: Tuacpi_status; cdecl; {$ifdef UACPI_REDUCED_HARDWARE}inline;{$else}external;{$endif}
 
 (*
  * Attempt to acquire the global lock for 'timeout' milliseconds.
@@ -330,6 +326,10 @@ function uacpi_release_global_lock(seq: Tuacpi_u32): Tuacpi_status; cdecl; exter
 procedure uacpi_state_reset; cdecl; external;
 
 implementation
+
+{$ifdef UACPI_REDUCED_HARDWARE}
+{$I event_rh.inc}
+{$endif UACPI_REDUCED_HARDWARE}
 
 {$ifdef UACPI_REDUCED_HARDWARE}
 function uacpi_enter_acpi_mode: Tuacpi_status;
