@@ -72,7 +72,7 @@ type
     UACPI_GPE_TRIGGERING_MAX = UACPI_GPE_TRIGGERING_EDGE
   );
 
-function uacpi_gpe_triggering_to_string(triggering: Tuacpi_gpe_triggering): PChar; external;
+function uacpi_gpe_triggering_to_string(triggering: Tuacpi_gpe_triggering): Puacpi_char; external;
 
 (*
  * Installs a handler to the provided GPE at 'idx' controlled by device

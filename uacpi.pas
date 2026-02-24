@@ -12,28 +12,21 @@ const
 {$I platform/arch_helpers.inc}
 {$I platform/types.inc}
 
-type
-  Puacpi_u8  = ^Tuacpi_u8;
-  Puacpi_u16 = ^Tuacpi_u16;
-  Puacpi_u32 = ^Tuacpi_u32;
-  Puacpi_u64 = ^Tuacpi_u64;
-
-  Puacpi_i8  = ^Tuacpi_i8;
-  Puacpi_i16 = ^Tuacpi_i16;
-  Puacpi_i32 = ^Tuacpi_i32;
-  Puacpi_i64 = ^Tuacpi_i64;
-
-  Puacpi_char = ^Tuacpi_char;
-
-{$I status.inc}
-{$I namespace.inc}
 {$I types.inc}
 {$I log.inc}
 
 {$I acpi.inc}
 {$I context.inc}
 {$I event.inc}
+{$I io.inc}
+{$I notify.inc}
+{$I opregion.inc}
+{$I osi.inc}
+{$I registers.inc}
+{$I resources.inc}
+{$I sleep.inc}
 {$I tables.inc}
+{$I utilities.inc}
 
 (*
  * Set up early access to the table subsystem. What this means is:
@@ -153,14 +146,14 @@ function uacpi_get_current_init_level: Tuacpi_init_level; cdecl; external;
  *)
 function uacpi_eval(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
@@ -169,13 +162,13 @@ function uacpi_eval_simple(
  *)
 function uacpi_execute(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   args: Puacpi_object_array
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_execute_simple(
   parent: Puacpi_namespace_node;
-  const path: PChar
+  const path: Puacpi_char
 ): Tuacpi_status; cdecl; external;
 
 (*
@@ -184,7 +177,7 @@ function uacpi_execute_simple(
  *)
 function uacpi_eval_typed(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   ret_mask: Tuacpi_object_type_bits;
   out ret: Puacpi_object
@@ -192,7 +185,7 @@ function uacpi_eval_typed(
 
 function uacpi_eval_simple_typed(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   ret_mask: Tuacpi_object_type_bits;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
@@ -202,14 +195,14 @@ function uacpi_eval_simple_typed(
  *)
 function uacpi_eval_integer(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out out_value: Tuacpi_u64
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple_integer(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out out_value: Tuacpi_u64
 ): Tuacpi_status; cdecl; external;
 
@@ -221,14 +214,14 @@ function uacpi_eval_simple_integer(
  *)
 function uacpi_eval_buffer_or_string(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple_buffer_or_string(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
@@ -239,14 +232,14 @@ function uacpi_eval_simple_buffer_or_string(
  *)
 function uacpi_eval_string(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple_string(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
@@ -257,14 +250,14 @@ function uacpi_eval_simple_string(
  *)
 function uacpi_eval_buffer(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple_buffer(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
@@ -275,14 +268,14 @@ function uacpi_eval_simple_buffer(
  *)
 function uacpi_eval_package(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   const args: Puacpi_object_array;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
 function uacpi_eval_simple_package(
   parent: Puacpi_namespace_node;
-  const path: PChar;
+  const path: Puacpi_char;
   out ret: Puacpi_object
 ): Tuacpi_status; cdecl; external;
 
@@ -329,6 +322,7 @@ implementation
 
 {$ifdef UACPI_REDUCED_HARDWARE}
 {$I event_rh.inc}
+{$I sleep_rh.inc}
 {$endif UACPI_REDUCED_HARDWARE}
 
 {$ifdef UACPI_REDUCED_HARDWARE}

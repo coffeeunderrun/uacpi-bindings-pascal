@@ -1,4 +1,20 @@
 type
+  Puacpi_u8  = ^Tuacpi_u8;
+  Puacpi_u16 = ^Tuacpi_u16;
+  Puacpi_u32 = ^Tuacpi_u32;
+  Puacpi_u64 = ^Tuacpi_u64;
+
+  Puacpi_i8  = ^Tuacpi_i8;
+  Puacpi_i16 = ^Tuacpi_i16;
+  Puacpi_i32 = ^Tuacpi_i32;
+  Puacpi_i64 = ^Tuacpi_i64;
+
+  Puacpi_char = ^Tuacpi_char;
+  PPuacpi_char = ^Puacpi_char;
+
+{$I status.inc}
+
+type
 {$if not defined(CPU64) and defined(UACPI_PHYS_ADDR_IS_32BITS)}
   Tuacpi_phys_addr = Tuacpi_u32;
   Tuacpi_io_addr   = Tuacpi_u32;
@@ -16,6 +32,7 @@ type
   Puacpi_object = ^Tuacpi_object;
   Tuacpi_object = record end;
 
+  Puacpi_object_name = ^Tuacpi_object_name;
   Tuacpi_object_name = record
     text: array [0..3] of Tuacpi_char;
     id: Tuacpi_u32;
@@ -82,6 +99,7 @@ type
     UACPI_INIT_LEVEL_NAMESPACE_INITIALIZED = 3
   );
 
+  Puacpi_pci_address = ^Tuacpi_pci_address;
   Tuacpi_pci_address = record
     segment: Tuacpi_u16;
     bus: Tuacpi_u8;
@@ -147,6 +165,8 @@ type
     UACPI_OBJECT_BUFFER_INDEX_BIT = (1 shl Tuacpi_u32(UACPI_OBJECT_BUFFER_INDEX)),
     UACPI_OBJECT_ANY_BIT = $FFFFFFFF
   );
+
+{$I namespace.inc}
 
 procedure uacpi_object_ref(obj: Puacpi_object); cdecl; external;
 procedure uacpi_object_unref(obj: Puacpi_object); cdecl; external;
@@ -343,6 +363,7 @@ function uacpi_object_assign_reference(obj: Puacpi_object; child: Puacpi_object)
 function uacpi_object_get_dereferenced(obj: Puacpi_object; out out_obj: Puacpi_object): Tuacpi_status; cdecl; external;
 
 type
+  Puacpi_processor_info = ^Tuacpi_processor_info;
   Tuacpi_processor_info = record
     id: Tuacpi_u8;
     block_address: Tuacpi_u32;
@@ -355,6 +376,7 @@ type
 function uacpi_object_get_processor_info(obj: Puacpi_object; out out_info: Tuacpi_processor_info): Tuacpi_status; cdecl; external;
 
 type
+  Puacpi_power_resource_info = ^Tuacpi_power_resource_info;
   Tuacpi_power_resource_info = record
     system_level: Tuacpi_u8;
     resource_order: Tuacpi_u16;
@@ -397,20 +419,24 @@ type
     UACPI_REGION_OP_SERIAL_WRITE
   );
 
+  Puacpi_generic_region_info = ^Tuacpi_generic_region_info;
   Tuacpi_generic_region_info = record
     base: Tuacpi_u64;
     length: Tuacpi_u64;
   end;
 
+  Puacpi_pcc_region_info = ^Tuacpi_pcc_region_info;
   Tuacpi_pcc_region_info = record
     buffer: Tuacpi_data_view;
     subspace_id: Tuacpi_u8;
   end;
 
+  Puacpi_gpio_region_info = ^Tuacpi_gpio_region_info;
   Tuacpi_gpio_region_info = record
      num_pins: Tuacpi_u64;
   end;
 
+  Puacpi_region_attach_data = ^Tuacpi_region_attach_data;
   Tuacpi_region_attach_data = record
     handler_context: Pointer;
     region_node: Puacpi_namespace_node;
@@ -422,6 +448,7 @@ type
     out_region_context: Pointer;
   end;
 
+  Puacpi_region_rw_data = ^Tuacpi_region_rw_data;
   Tuacpi_region_rw_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -433,12 +460,14 @@ type
     byte_width: Tuacpi_u8;
   end;
 
+  Puacpi_region_pcc_send_data = ^Tuacpi_region_pcc_send_data;
   Tuacpi_region_pcc_send_data = record
     handler_context: Pointer;
     region_context: Pointer;
     buffer: Tuacpi_data_view;
   end;
 
+  Puacpi_region_gpio_rw_data = ^Tuacpi_region_gpio_rw_data;
   Tuacpi_region_gpio_rw_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -448,6 +477,7 @@ type
     value: Tuacpi_u64;
   end;
 
+  Puacpi_region_ipmi_rw_data = ^Tuacpi_region_ipmi_rw_data;
   Tuacpi_region_ipmi_rw_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -455,8 +485,10 @@ type
     command: Tuacpi_u64;
   end;
 
+  Puacpi_region_ffixedhw_rw_data = ^Tuacpi_region_ffixedhw_rw_data;
   Tuacpi_region_ffixedhw_rw_data = Tuacpi_region_ipmi_rw_data;
 
+  Puacpi_region_prm_rw_data = ^Tuacpi_region_prm_rw_data;
   Tuacpi_region_prm_rw_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -476,6 +508,7 @@ type
     UACPI_ACCESS_ATTRIBUTE_RAW_PROCESS_BYTES = $0F
   );
 
+  Puacpi_region_serial_rw_data = ^Tuacpi_region_serial_rw_data;
   Tuacpi_region_serial_rw_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -493,6 +526,7 @@ type
     access_length: Tuacpi_u8;
   end;
 
+  Puacpi_region_detach_data = ^Tuacpi_region_detach_data;
   Tuacpi_region_detach_data = record
     handler_context: Pointer;
     region_context: Pointer;
@@ -508,6 +542,7 @@ type
     UACPI_FIRMWARE_REQUEST_TYPE_FATAL
   );
 
+  Puacpi_firmware_request = ^Tuacpi_firmware_request;
   Tuacpi_firmware_request = record
     &type: Tuacpi_u8;
     case Integer of
@@ -533,6 +568,7 @@ const
   UACPI_INTERRUPT_HANDLED = 1;
 
 type
+  Puacpi_interrupt_ret = ^Tuacpi_interrupt_ret;
   Tuacpi_interrupt_ret = Tuacpi_u32;
 
   Tuacpi_interrupt_handler = function(context: Tuacpi_handle): Tuacpi_interrupt_ret; cdecl;

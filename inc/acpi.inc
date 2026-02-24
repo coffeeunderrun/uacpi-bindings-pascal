@@ -250,6 +250,7 @@ type
     {$error sizeof(Tacpi_madt_lapic_nmi) <> 6}
   {$endif}
 
+  Pacpi_madt_lapic_address_override = ^Tacpi_madt_lapic_address_override;
   Tacpi_madt_lapic_address_override = packed record
     hdr: Tacpi_entry_hdr;
     rsvd: Tuacpi_u16;
