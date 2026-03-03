@@ -33,9 +33,9 @@ type
   Tuacpi_object = record end;
 
   Puacpi_object_name = ^Tuacpi_object_name;
-  Tuacpi_object_name = record
-    text: array [0..3] of Tuacpi_char;
-    id: Tuacpi_u32;
+  Tuacpi_object_name = record case Integer of
+    0: (text: array [0..3] of Tuacpi_char);
+    1: (id: Tuacpi_u32);
   end;
 
   Tuacpi_iteration_decision = (
@@ -140,8 +140,8 @@ type
     UACPI_OBJECT_DEBUG = 16,
 
     UACPI_OBJECT_REFERENCE = 20,
-    UACPI_OBJECT_BUFFER_INDEX = 21,
-    UACPI_OBJECT_MAX_TYPE_VALUE = UACPI_OBJECT_BUFFER_INDEX
+    UACPI_OBJECT_BUFFER_INDEX = 21
+    // UACPI_OBJECT_MAX_TYPE_VALUE = UACPI_OBJECT_BUFFER_INDEX
   );
 
   // Type bits for API requiring a bit mask, e.g. uacpi_eval_typed

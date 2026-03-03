@@ -95,6 +95,7 @@ type
     size: Tuacpi_u32;
 
     // list of PNP ids
+    // Tuacpi_id_string ids[];
     ids: record end;
   end;
 
@@ -150,8 +151,8 @@ type
     size: Tuacpi_u32;
 
     // Object information
-    name: Tuacpi_object_name;
-    &type: Tuacpi_object_type;
+    obj_name: Tuacpi_object_name;
+    obj_type: Tuacpi_object_type;
     num_params: Tuacpi_u8;
 
     // UACPI_NS_NODE_INFO_HAS_*
