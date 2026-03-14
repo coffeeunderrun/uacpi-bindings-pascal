@@ -24,6 +24,7 @@ const
   ACPI_PSDT_SIGNATURE = 'PSDT';
   ACPI_ECDT_SIGNATURE = 'ECDT';
   ACPI_RHCT_SIGNATURE = 'RHCT';
+  ACPI_DMAR_SIGNATURE = 'DMAR';
 
   ACPI_AS_ID_SYS_MEM = $00;
   ACPI_AS_ID_SYS_IO = $01;
@@ -1878,4 +1879,169 @@ type
   end;
   {$if sizeof(Tacpi_resource_clock_input) <> 13}
     {$error sizeof(Tacpi_resource_clock_input) <> 13}
+  {$endif}
+
+const
+  // Tacpi_dmar->flags
+  ACPI_DMAR_INTR_REMAP = (1 shl 0);
+  ACPI_DMAR_X2APIC_OPT_OUT = (1 shl 1);
+  ACPI_DMAR_DMA_CTRL_PLATFORM_OPT_IN_FLAG = (1 shl 2);
+
+type
+  Tacpi_dmar_entry_hdr = packed record
+    &type: Tuacpi_u16;
+    length: Tuacpi_u16;
+  end;
+  {$if sizeof(Tacpi_dmar_entry_hdr) <> 4}
+    {$error sizeof(Tacpi_dmar_entry_hdr) <> 4}
+  {$endif}
+
+  // Tacpi_dmar_entry_hdr->type
+  Tacpi_dmar_entry_type = (
+    ACPI_DMAR_ENTRY_TYPE_DRHD = 0,
+    ACPI_DMAR_ENTRY_TYPE_RMRR = 1,
+    ACPI_DMAR_ENTRY_TYPE_ATSR = 2,
+    ACPI_DMAR_ENTRY_TYPE_RHSA = 3,
+    ACPI_DMAR_ENTRY_TYPE_ANDD = 4,
+    ACPI_DMAR_ENTRY_TYPE_SATC = 5,
+    ACPI_DMAR_ENTRY_TYPE_SIDP = 6
+  );
+
+  Tacpi_dmar = packed record
+    hdr: Tacpi_sdt_hdr;
+    haw: Tuacpi_u8;
+    flags: Tuacpi_u8;
+    rsvd: array [0..9] of Tuacpi_u8;
+    // start of Tacpi_dmar_entry_hdr array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar) <> 48}
+    {$error sizeof(Tacpi_dmar) <> 48}
+  {$endif}
+
+const
+  // Tacpi_dmar_dss->type
+  ACPI_DSS_PCI_ENDPOINT = $01;
+  ACPI_DSS_PCI_BRIDGE = $02;
+  ACPI_DSS_IOAPIC = $03;
+  ACPI_DSS_MSI_CAPABLE_HPET = $04;
+  ACPI_DSS_ACPI_NAMESPACE_DEVICE = $05;
+
+  // Tacpi_dmar_dss->flags
+  ACPI_DSS_REQ_WO_PASID_NESTED_NOTALLOWED = (1 shl 0);
+  ACPI_DSS_REQ_WO_PASID_PWSNP_NOTALLOWED = (1 shl 1);
+  ACPI_DSS_REQ_WO_PASID_PGSNP_NOTALLOWED = (1 shl 2);
+  ACPI_DSS_ATC_HARDENED = (1 shl 3);
+  ACPI_DSS_ATC_REQUIRED = (1 shl 4);
+
+type
+  Tacpi_dmar_dss = packed record
+    &type: Tuacpi_u8;
+    length: Tuacpi_u8;
+    flags: Tuacpi_u8;
+    rsvd: Tuacpi_u8;
+    enumeration_id: Tuacpi_u8;
+    start_bus: Tuacpi_u8;
+    // Start of Tuacpi_u16 array
+    path: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_dss) <> 6}
+    {$error sizeof(Tacpi_dmar_dss) <> 6}
+  {$endif}
+
+const
+  // Tacpi_dmar_drhd->flags
+  ACPI_INCLUDE_PCI_ALL = (1 shl 0);
+
+type
+  Tacpi_dmar_drhd = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    flags: Tuacpi_u8;
+    size: Tuacpi_u8;
+    segment: Tuacpi_u16;
+    address: Tuacpi_u64;
+    // start of Tacpi_dmar_dss array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_drhd) <> 16}
+    {$error sizeof(Tacpi_dmar_drhd) <> 16}
+  {$endif}
+
+  Tacpi_dmar_rmrr = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    rsvd: Tuacpi_u16;
+    segment: Tuacpi_u16;
+    base: Tuacpi_u64;
+    limit: Tuacpi_u64;
+    // start of Tacpi_dmar_dss array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_rmrr) <> 24}
+    {$error sizeof(Tacpi_dmar_rmrr) <> 24}
+  {$endif}
+
+const
+  // Tacpi_dmar_atsr->flags
+  ACPI_ATSR_ALL_PORTS = (1 shl 0);
+
+type
+  Tacpi_dmar_atsr = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    flags: Tuacpi_u8;
+    rsvd: Tuacpi_u8;
+    segment: Tuacpi_u16;
+    // Start of Tacpi_dmar_dss array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_atsr) <> 8}
+    {$error sizeof(Tacpi_dmar_atsr) <> 8}
+  {$endif}
+
+  Tacpi_dmar_rhsa = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    rsvd: Tuacpi_u32;
+    base: Tuacpi_u64;
+    proximity_domain: Tuacpi_u32;
+  end;
+  {$if sizeof(Tacpi_dmar_rhsa) <> 20}
+    {$error sizeof(Tacpi_dmar_rhsa) <> 20}
+  {$endif}
+
+  Tacpi_dmar_andd = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    rsvd: array [0..2] of Tuacpi_u8;
+    device_id: Tuacpi_u8;
+    // Start of Tuacpi_char array
+    name: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_andd) <> 8}
+    {$error sizeof(Tacpi_dmar_andd) <> 8}
+  {$endif}
+
+const
+  // Tacpi_dmar_satc->flags
+  ACPI_SATC_ATC_REQUIRED = $01;
+
+type
+  Tacpi_dmar_satc = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    flags: Tuacpi_u8;
+    rsvd: Tuacpi_u8;
+    segment: Tuacpi_u16;
+    // Start of Tacpi_dmar_dss array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_satc) <> 8}
+    {$error sizeof(Tacpi_dmar_satc) <> 8}
+  {$endif}
+
+  Tacpi_dmar_sidp = packed record
+    hdr: Tacpi_dmar_entry_hdr;
+    rsvd: Tuacpi_u16;
+    segment: Tuacpi_u16;
+    // Start of Tacpi_dmar_dss array
+    entries: record end;
+  end;
+  {$if sizeof(Tacpi_dmar_sidp) <> 8}
+    {$error sizeof(Tacpi_dmar_sidp) <> 8}
   {$endif}
