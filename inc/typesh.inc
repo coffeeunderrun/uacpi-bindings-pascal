@@ -12,7 +12,7 @@ type
   Puacpi_char = ^Tuacpi_char;
   PPuacpi_char = ^Puacpi_char;
 
-{$I status.inc}
+{$I statush.inc}
 
 type
 {$if not defined(CPU64) and defined(UACPI_PHYS_ADDR_IS_32BITS)}
@@ -166,7 +166,7 @@ type
     UACPI_OBJECT_ANY_BIT = $FFFFFFFF
   );
 
-{$I namespace.inc}
+{$I namespaceh.inc}
 
 procedure uacpi_object_ref(obj: Puacpi_object); cdecl; external;
 procedure uacpi_object_unref(obj: Puacpi_object); cdecl; external;

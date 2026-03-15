@@ -6,7 +6,9 @@
 
 { NOTE: FreePascal does not support flexible array members.
   Using a dynamic array would add a pointer to the end of the record.
-  Instead, an empty record will be used to get the start of the array without any pointer arithmetic. }
+  Instead, an empty record will be used to get the start of the array without any pointer arithmetic.
+
+  UPDATE 20260314 - Start adding type helpers to assist with using these empty records. }
 
 const
   ACPI_RSDP_SIGNATURE = 'RSD PTR ';

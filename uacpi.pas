@@ -2,6 +2,11 @@ unit uacpi;
 
 {$packrecords C}
 
+{$if FPC_FULLVERSION >= 20600}
+  // FPC 2.6.0 or higher required for advanced records.
+  {$modeswitch advancedrecords}
+{$endif}
+
 interface
 
 const
@@ -9,24 +14,29 @@ const
   UACPI_MINOR = 0;
   UACPI_PATCH = 0;
 
-{$I platform/arch_helpers.inc}
-{$I platform/types.inc}
+{$I platform/arch_helpersh.inc}
+{$I platform/typesh.inc}
 
-{$I types.inc}
-{$I log.inc}
+{$I typesh.inc}
+{$I logh.inc}
 
-{$I acpi.inc}
-{$I context.inc}
-{$I event.inc}
-{$I io.inc}
-{$I notify.inc}
-{$I opregion.inc}
-{$I osi.inc}
-{$I registers.inc}
-{$I resources.inc}
-{$I sleep.inc}
-{$I tables.inc}
-{$I utilities.inc}
+{$I acpih.inc}
+{$I contexth.inc}
+{$I eventh.inc}
+{$I ioh.inc}
+{$I notifyh.inc}
+{$I opregionh.inc}
+{$I osih.inc}
+{$I registersh.inc}
+{$I resourcesh.inc}
+{$I sleeph.inc}
+{$I tablesh.inc}
+{$I utilitiesh.inc}
+
+{$if FPC_FULLVERSION >= 20600}
+  // FPC 2.6.0 or higher required for record helpers.
+  {$I recordhelph.inc}
+{$endif}
 
 (*
  * Set up early access to the table subsystem. What this means is:
@@ -320,9 +330,14 @@ procedure uacpi_state_reset; cdecl; external;
 
 implementation
 
+{$if FPC_FULLVERSION >= 20600}
+  // FPC 2.6.0 or higher required for record helpers.
+  {$I recordhelp.inc}
+{$endif}
+
 {$ifdef UACPI_REDUCED_HARDWARE}
-{$I event_rh.inc}
-{$I sleep_rh.inc}
+{$I event.inc}
+{$I sleep.inc}
 {$endif UACPI_REDUCED_HARDWARE}
 
 {$ifdef UACPI_REDUCED_HARDWARE}
